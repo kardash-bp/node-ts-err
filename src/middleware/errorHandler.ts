@@ -34,5 +34,31 @@ export class AppError extends Error {
     Error.captureStackTrace(this)
   }
 }
-class ErrorHandler {}
+class ErrorHandler {
+  public isGuestError(error: Error): boolean {
+    if (error instanceof AppError) return error.isOperational
+
+    return false
+  }
+  public handleError(error: Error | AppError, response?: Response): void {
+    if (this.isGuestError(error) && response) {
+      this.handleGuestError(error as AppError, response)
+    } else {
+      this.handleCriticalError(error, response)
+    }
+  }
+
+  private handleGuestError(error: AppError, response: Response): void {
+    response.status(error.httpCode).json({ message: error.message })
+  }
+  private handleCriticalError(error: Error | AppError, response?: Response) {
+    if (response) {
+      response
+        .status(HttpCode.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal server error' })
+    }
+    console.log('Application encountered a critical error. Exiting')
+    process.exit(1)
+  }
+}
 export const errorHandler = new ErrorHandler()

@@ -1,8 +1,10 @@
 import 'express-async-errors'
-import { NextFunction, Request, Response, Router } from 'express'
-import { AppError, HttpCode, errorHandler } from '../middleware/errorHandler'
+import { Response, Router } from 'express'
+import { AppError, HttpCode } from '../middleware/errorHandler'
 
 const router = Router()
+
+//! Error testing routes *********************************************
 
 const getUserFromDb = async () => {
   return new Promise(() => {
@@ -50,14 +52,14 @@ router.get('/user/:id', async (_, res: Response) => {
   res.json(user)
 })
 
-router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.log('Error encountered:', err.message || err)
+// router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+//   console.log('Error encountered:', err.message || err)
 
-  next(err)
-})
+//   next(err)
+// })
 
-router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  //errorHandler.handleError(err, res)
-})
+// router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+//   errorHandler.handleError(err, res)
+// })
 
 export default router
